@@ -17,7 +17,7 @@ set -e
 ###################################
 #      OpenSSL Version
 ###################################
-OPENSSL_VERSION="openssl-1.1.0e"
+OPENSSL_VERSION="openssl-1.1.0i"
 ###################################
 
 ###################################
@@ -55,7 +55,7 @@ buildMac()
    pushd . > /dev/null
    cd "./dist/${OPENSSL_VERSION}"
    echo "Configure"
-   ./Configure ${TARGET} --openssldir="/tmp/${OPENSSL_VERSION}-${ARCH}" &> "/tmp/${OPENSSL_VERSION}-${ARCH}.log"
+   ./Configure ${TARGET} --prefix="/tmp/${OPENSSL_VERSION}-${ARCH}" --openssldir="/tmp/${OPENSSL_VERSION}-${ARCH}" &> "/tmp/${OPENSSL_VERSION}-${ARCH}.log"
    make >> "/tmp/${OPENSSL_VERSION}-${ARCH}.log" 2>&1
    echo "make install"
    make install >> "/tmp/${OPENSSL_VERSION}-${ARCH}.log" 2>&1
@@ -150,7 +150,9 @@ cp /tmp/${OPENSSL_VERSION}-x86_64/lib/libcrypto.a ${OSX_DIST_OUTPUT}/lib/libcryp
 cp /tmp/${OPENSSL_VERSION}-x86_64/lib/libssl.a ${OSX_DIST_OUTPUT}/lib/libssl.a
 
 echo "Compress OS X libraries"
+cd "./dist"
 tar --exclude='*DS_Store' -zcf ${OPENSSL_VERSION}-osx.tar.gz ${OPENSSL_VERSION}-osx
+cd "../"
 
 echo "----------------------------------------"
 echo "OpenSSL version: ${OPENSSL_VERSION}"
@@ -183,7 +185,9 @@ lipo \
    -create -output ${IOS_DIST_OUTPUT}/lib/libssl.a
 
 echo "Compress iOS libraries"
+cd "./dist"
 tar --exclude='*DS_Store' -zcf ${OPENSSL_VERSION}-ios.tar.gz ${OPENSSL_VERSION}-ios
+cd "../"
 
 echo "Cleaning up"
 rm -rf /tmp/${OPENSSL_VERSION}-*
